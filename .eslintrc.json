@@ -1,0 +1,13 @@
+{
+    "extends": "standard",
+    "env": {
+        "node": true,
+        "es6": true,
+        "jasmine": true
+    },
+    "rules": {
+        "strict": 0,
+        "semi": ["error", "always"],
+        "indent": ["error", 4]
+    }
+}
