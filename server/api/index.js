@@ -1,11 +1,14 @@
 'use strict';
 
+const Joi = require('joi');
+const Boom = require('boom');
 const routes = [
     {
         method: 'GET',
         path: '/hello',
-        handler: function (request, reply) {
-            return reply('hello world');
+        handler: require('./friendsHandler'),
+        config: {
+            tags: ['api']
         }
     }
 ];

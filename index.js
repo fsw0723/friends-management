@@ -1,5 +1,8 @@
 'use strict';
 
+require('dotenv').config();
+require('./server/db/database');
+
 const Hapi = require('hapi');
 const Vision = require('vision');
 const HapiSwagger = require('hapi-swagger');
