@@ -1,14 +1,19 @@
 'use strict';
 
 const Joi = require('joi');
-const Boom = require('boom');
+
 const routes = [
     {
-        method: 'GET',
-        path: '/hello',
-        handler: require('./friendsHandler'),
+        method: 'POST',
+        path: '/user',
         config: {
-            tags: ['api']
+            handler: require('./usersHandler').create,
+            tags: ['api'],
+            validate: {
+                payload: {
+                    email: Joi.string().required()
+                }
+            }
         }
     }
 ];

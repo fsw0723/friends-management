@@ -1,6 +1,6 @@
 'use strict';
 
-function handle(request, reply) {
+function handle (request, reply) {
     return reply('hello world');
 }
 

@@ -9,7 +9,7 @@ Mongoose.connect(`mongodb://${dbUser}:${dbPassword}@ds149324.mlab.com:49324/frie
 let db = Mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
 
-db.once('open', function callback() {
+db.once('open', function callback () {
     console.log('Connection with database succeeded.');
 });
 
