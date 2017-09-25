@@ -3,13 +3,12 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
 
 let userSchema = new Schema({
     email: String,
-    friends: [{ type: ObjectId, ref: 'User' }],
-    block: [{ type: ObjectId, ref: 'User' }],
-    subscribe: [{ type: ObjectId, ref: 'User' }]
+    friends: [this],
+    block: [this],
+    subscribe: [this]
 });
 
 userSchema.index({email: 1}, {unique: true});
