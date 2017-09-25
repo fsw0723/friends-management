@@ -41,6 +41,18 @@ const routes = [
         }
     }, {
         method: 'POST',
+        path: '/friends/common',
+        config: {
+            handler: require('./friendsHandler').getCommon,
+            tags: ['api'],
+            validate: {
+                payload: {
+                    friends: Joi.array().length(2)
+                }
+            }
+        }
+    }, {
+        method: 'POST',
         path: '/subscribe',
         config: {
             handler: require('./subscribeHandler').create,

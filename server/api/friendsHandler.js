@@ -37,18 +37,43 @@ function create (request, reply) {
 }
 
 function get(request, reply) {
-    User.findOne({ email: request.query.email}).populate('friends').exec((err, docs) => {
+    User.getFriends(request.query.email, (err, friends) => {
         if (err) {
-            console.log(err);
+            throw err;
         }
 
-        return reply(docs.friends.map((friend) => {
-            return friend.email;
-        }));
+        return reply(friends);
+    });
+}
+
+function getCommon(request, reply) {
+    let queries = [];
+    request.payload.friends.forEach((email) => {
+        queries.push((cb) => {
+            User.getFriends(email, (err, docs) => {
+                if (err) {
+                    throw cb(err);
+                }
+                cb(null, docs);
+            });
+        })
+    });
+    async.parallel(queries, (err, docs) => {
+        if (err) {
+            throw err;
+        }
+
+        let common = docs[0].filter((user) => docs[1].includes(user));
+        return reply({
+            success: true,
+            friends: common,
+            count: common.length
+        })
     });
 }
 
 module.exports = {
     create,
-    get
+    get,
+    getCommon
 };
