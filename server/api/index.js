@@ -39,6 +39,19 @@ const routes = [
                 }
             }
         }
+    }, {
+        method: 'POST',
+        path: '/subscribe',
+        config: {
+            handler: require('./subscribeHandler').create,
+            tags: ['api'],
+            validate: {
+                payload: {
+                    requestor: Joi.string().required(),
+                    target: Joi.string().required()
+                }
+            }
+        }
     }
 ];
 
