@@ -55,7 +55,20 @@ const routes = [
         method: 'POST',
         path: '/subscribe',
         config: {
-            handler: require('./subscribeHandler').create,
+            handler: require('./subscribeHandler').subscribe,
+            tags: ['api'],
+            validate: {
+                payload: {
+                    requestor: Joi.string().required(),
+                    target: Joi.string().required()
+                }
+            }
+        }
+    }, {
+        method: 'POST',
+        path: '/block',
+        config: {
+            handler: require('./subscribeHandler').block,
             tags: ['api'],
             validate: {
                 payload: {

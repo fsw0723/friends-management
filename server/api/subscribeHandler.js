@@ -2,7 +2,7 @@
 
 const User = require('./models/user');
 
-function create (request, reply) {
+function subscribe (request, reply) {
     User.findOne({email: request.payload.target}).exec((err, doc) => {
         User.findOneAndUpdate(
             {email: request.payload.requestor},
@@ -18,10 +18,27 @@ function create (request, reply) {
             }
         );
     });
+}
 
-
+function block (request, reply) {
+    User.findOne({email: request.payload.target}).exec((err, doc) => {
+        User.findOneAndUpdate(
+            {email: request.payload.requestor},
+            { $push: { block: doc._id } },
+            function(err, data) {
+                // Handle err
+                if(err) {
+                    console.log(err);
+                }
+                return reply({
+                    "success": true
+                });
+            }
+        );
+    });
 }
 
 module.exports = {
-    create
+    subscribe,
+    block
 };

@@ -3,6 +3,10 @@
 const User = require('./models/user');
 const async = require('async');
 
+function blockUpdates (requestor, target) {
+    return requestor.block.indexOf(target._id.toString()) > -1;
+}
+
 function create (request, reply) {
     let queries = [];
     request.payload.friends.forEach((email) => {
@@ -24,14 +28,22 @@ function create (request, reply) {
 
         let user1 = docs[0];
         let user2 = docs[1];
-        user1.friends.push(user2._id);
-        user2.friends.push(user1._id);
-        user1.save();
-        user2.save();
 
-        return reply({
-            "success": true
-        });
+        if (!blockUpdates(user1, user2) && !blockUpdates(user2, user1)) {
+            user1.friends.push(user2._id);
+            user2.friends.push(user1._id);
+            user1.save();
+            user2.save();
+
+            return reply({
+                success: true
+            });
+        } else {
+            return reply({
+                success: false
+            })
+        }
+
     });
 
 }
