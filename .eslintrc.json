@@ -3,7 +3,8 @@
     "env": {
         "node": true,
         "es6": true,
-        "jasmine": true
+        "jasmine": true,
+        "mocha": true
     },
     "rules": {
         "strict": 0,
