@@ -27,18 +27,4 @@ userSchema.statics.getFriends = function (email, cb) {
         });
 };
 
-userSchema.statics.getBlockList = function (email, cb) {
-    this.findOne({email: email})
-        .populate('block')
-        .exec(function (err, user) {
-            if (err) {
-                return cb(err);
-            } else {
-                return cb(null, user.block.map((block) => {
-                    return block.email;
-                }));
-            }
-        });
-};
-
 module.exports = mongoose.model('user', userSchema);
