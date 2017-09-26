@@ -77,6 +77,19 @@ const routes = [
                 }
             }
         }
+    }, {
+        method: 'POST',
+        path: '/subscriber',
+        config: {
+            handler: require('./subscribeHandler').subscriber,
+            tags: ['api'],
+            validate: {
+                payload: {
+                    sender: Joi.string().required(),
+                    text: Joi.string().required()
+                }
+            }
+        }
     }
 ];
 

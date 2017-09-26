@@ -11,7 +11,7 @@ function create (request, reply) {
     let queries = [];
     request.payload.friends.forEach((email) => {
         queries.push(function (cb) {
-            User.findOne({ email: email}).exec(function (err, docs) {
+            User.findOne({email: email}).exec(function (err, docs) {
                 if (err) {
                     throw cb(err);
                 }
@@ -20,7 +20,7 @@ function create (request, reply) {
         });
     });
 
-    async.parallel(queries, function(err, docs) {
+    async.parallel(queries, function (err, docs) {
         // if any query fails
         if (err) {
             throw err;
@@ -41,14 +41,12 @@ function create (request, reply) {
         } else {
             return reply({
                 success: false
-            })
+            });
         }
-
     });
-
 }
 
-function get(request, reply) {
+function get (request, reply) {
     User.getFriends(request.query.email, (err, friends) => {
         if (err) {
             throw err;
@@ -58,7 +56,7 @@ function get(request, reply) {
     });
 }
 
-function getCommon(request, reply) {
+function getCommon (request, reply) {
     let queries = [];
     request.payload.friends.forEach((email) => {
         queries.push((cb) => {
@@ -68,7 +66,7 @@ function getCommon(request, reply) {
                 }
                 cb(null, docs);
             });
-        })
+        });
     });
     async.parallel(queries, (err, docs) => {
         if (err) {
@@ -80,7 +78,7 @@ function getCommon(request, reply) {
             success: true,
             friends: common,
             count: common.length
-        })
+        });
     });
 }
 
