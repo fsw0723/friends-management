@@ -59,7 +59,10 @@ function subscriber (request, reply) {
                     return user.email;
                 });
 
-                recipients = recipients.concat(extractEmails(request.payload.text));
+                let extractedEmail = extractEmails(request.payload.text);
+                if (extractedEmail) {
+                    recipients = recipients.concat(extractEmails(request.payload.text));
+                }
                 return reply({
                     success: true,
                     recipients

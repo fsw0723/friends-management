@@ -79,7 +79,7 @@ const routes = [
         }
     }, {
         method: 'POST',
-        path: '/subscriber',
+        path: '/subscribers',
         config: {
             handler: require('./subscribeHandler').subscriber,
             tags: ['api'],
