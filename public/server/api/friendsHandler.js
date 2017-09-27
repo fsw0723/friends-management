@@ -2,9 +2,13 @@
 
 const User = require('./models/user');
 const async = require('async');
+const Boom = require('boom');
 
 function blockUpdates (requestor, target) {
     return requestor.block.indexOf(target._id.toString()) > -1;
+}
+function isFriends(user1, user2) {
+    return user1.friends.indexOf(user2._id.toString()) > -1;
 }
 
 function create (request, reply) {
@@ -14,6 +18,9 @@ function create (request, reply) {
             User.findOne({email: email}).exec(function (err, docs) {
                 if (err) {
                     throw cb(err);
+                }
+                if (!docs) {
+                    return reply(Boom.badRequest('User does not exist.'));
                 }
                 cb(null, docs);
             });
@@ -30,10 +37,15 @@ function create (request, reply) {
         let user2 = docs[1];
 
         if (!blockUpdates(user1, user2) && !blockUpdates(user2, user1)) {
-            user1.friends.push(user2._id);
-            user2.friends.push(user1._id);
-            user1.save();
-            user2.save();
+            if (!isFriends(user1, user2)) {
+                user1.friends.push(user2._id);
+                user1.save();
+            }
+
+            if (!isFriends(user2, user1)) {
+                user2.friends.push(user1._id);
+                user2.save();
+            }
 
             return reply({
                 success: true
@@ -49,7 +61,7 @@ function create (request, reply) {
 function get (request, reply) {
     User.getFriends(request.query.email, (err, friends) => {
         if (err) {
-            throw err;
+            return reply(Boom.badRequest(err));
         }
 
         return reply(friends);
@@ -61,16 +73,14 @@ function getCommon (request, reply) {
     request.payload.friends.forEach((email) => {
         queries.push((cb) => {
             User.getFriends(email, (err, docs) => {
-                if (err) {
-                    throw cb(err);
-                }
-                cb(null, docs);
+                cb(err, docs);
             });
         });
     });
+
     async.parallel(queries, (err, docs) => {
         if (err) {
-            throw err;
+            return reply(Boom.badRequest(err));
         }
 
         let common = docs[0].filter((user) => docs[1].includes(user));

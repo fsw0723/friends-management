@@ -19,11 +19,15 @@ userSchema.statics.getFriends = function (email, cb) {
         .exec(function (err, user) {
             if (err) {
                 return cb(err);
-            } else {
-                return cb(null, user.friends.map((friend) => {
-                    return friend.email;
-                }));
             }
+
+            if (!user) {
+                return cb('User does not exist');
+            }
+
+            return cb(null, user.friends.map((friend) => {
+                return friend.email;
+            }));
         });
 };
 
