@@ -3,7 +3,6 @@ const chai = require('chai');
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 const assert = chai.assert;
-const Boom = require('boom');
 const async = require('async');
 
 require('mongoose');
@@ -40,16 +39,16 @@ describe('friendsHandler', () => {
             userDoc1 = {
                 '_id': '123',
                 'email': 'user1@gmail.com',
-                "friends": [],
-                "block": [],
+                'friends': [],
+                'block': [],
                 save: saveFunc
             };
 
             userDoc2 = {
                 '_id': '456',
                 'email': 'user2@gmail.com',
-                "friends": [],
-                "block": [],
+                'friends': [],
+                'block': [],
                 save: saveFunc
             };
 
@@ -61,10 +60,10 @@ describe('friendsHandler', () => {
         });
 
         it('should add user to each other\'s friends list', () => {
-
             friendsHandler.create(request, reply);
-            async.parallel.yield(null, [userDoc1, userDoc2]);
+            mockAsync.yield(null, [userDoc1, userDoc2]);
 
+            /* eslint-disable no-unused-expressions */
             expect(async.parallel).to.have.been.called;
             assert(saveFunc.calledTwice);
             expect(reply).have.been.calledWith({
@@ -79,6 +78,7 @@ describe('friendsHandler', () => {
             friendsHandler.create(request, reply);
             async.parallel.yield(null, [userDoc1, userDoc2]);
 
+            /* eslint-disable no-unused-expressions */
             expect(async.parallel).to.have.been.called;
             assert(saveFunc.notCalled);
             expect(reply).have.been.calledWith({
@@ -92,14 +92,13 @@ describe('friendsHandler', () => {
             friendsHandler.create(request, reply);
             async.parallel.yield(null, [userDoc1, userDoc2]);
 
+            /* eslint-disable no-unused-expressions */
             expect(async.parallel).to.have.been.called;
             assert(saveFunc.notCalled);
             expect(reply).have.been.calledWith({
                 success: false
             });
-        })
-
-
+        });
     });
 
     describe('#get', () => {
@@ -140,7 +139,7 @@ describe('friendsHandler', () => {
         beforeEach(() => {
             getFriendsStub = sandbox.stub(User, 'getFriends');
             request = {
-                payload:{
+                payload: {
                     friends: ['user1@gmail.com', 'user2@gmail.com']
                 }
             };

@@ -48,7 +48,7 @@ function extractEmails (text) {
     return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
 }
 
-function subscriber (request, reply) {
+function getSubscribers (request, reply) {
     User.findOne({email: request.payload.sender}).exec((err, sender) => {
         if (err) {
             throw err;
@@ -75,5 +75,5 @@ function subscriber (request, reply) {
 module.exports = {
     subscribe,
     block,
-    subscriber
+    getSubscribers
 };

@@ -7,7 +7,7 @@ const Boom = require('boom');
 function blockUpdates (requestor, target) {
     return requestor.block.indexOf(target._id.toString()) > -1;
 }
-function isFriends(user1, user2) {
+function isFriends (user1, user2) {
     return user1.friends.indexOf(user2._id.toString()) > -1;
 }
 

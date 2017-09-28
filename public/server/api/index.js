@@ -81,7 +81,7 @@ const routes = [
         method: 'POST',
         path: '/subscribers',
         config: {
-            handler: require('./subscribeHandler').subscriber,
+            handler: require('./subscribeHandler').getSubscribers,
             tags: ['api'],
             validate: {
                 payload: {

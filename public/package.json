@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "npm run lint && mocha --recursive test",
+    "test": "eslint *.js server test && mocha --recursive test",
+    "unit": "mocha --recursive test",
     "lint": "eslint *.js server test"
   },
   "repository": {

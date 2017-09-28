@@ -14,7 +14,7 @@ describe('Endpoint Routing', () => {
         done();
     });
 
-    describe('#friends', function() {
+    describe('#friends', () => {
         it('/friends should fail if pass less than 2 email addresses', (done) => {
             server.inject({
                 method: 'POST',
@@ -22,7 +22,7 @@ describe('Endpoint Routing', () => {
                 payload: {
                     friends: ['abc@gmail.com']
                 }
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"friends" must contain 2 items');
@@ -37,7 +37,7 @@ describe('Endpoint Routing', () => {
                 payload: {
                     friends: ['abc@gmail.com']
                 }
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"friends" must contain 2 items');
@@ -49,7 +49,7 @@ describe('Endpoint Routing', () => {
             server.inject({
                 method: 'GET',
                 url: '/friends'
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"email" is required');
@@ -64,7 +64,7 @@ describe('Endpoint Routing', () => {
                 method: 'POST',
                 url: '/subscribe',
                 payload: {}
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"requestor" is required');
@@ -79,7 +79,7 @@ describe('Endpoint Routing', () => {
                 payload: {
                     requestor: 'abc@gmail.com'
                 }
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"target" is required');
@@ -92,7 +92,7 @@ describe('Endpoint Routing', () => {
                 method: 'POST',
                 url: '/block',
                 payload: {}
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"requestor" is required');
@@ -107,7 +107,7 @@ describe('Endpoint Routing', () => {
                 payload: {
                     requestor: 'abc@gmail.com'
                 }
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"target" is required');
@@ -120,7 +120,7 @@ describe('Endpoint Routing', () => {
                 method: 'POST',
                 url: '/subscribers',
                 payload: {}
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"sender" is required');
@@ -135,14 +135,12 @@ describe('Endpoint Routing', () => {
                 payload: {
                     sender: 'abc@gmail.com'
                 }
-            }, function(res) {
+            }, (res) => {
                 expect(res.statusCode).to.equal(400);
                 let payload = JSON.parse(res.payload);
                 expect(payload.message).to.include('"text" is required');
                 done();
             });
         });
-
     });
 });
-
