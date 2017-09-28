@@ -85,7 +85,6 @@ function getSubscribers (request, reply) {
                                 callback(err);
                             }
                             if (!user || user.block.indexOf(sender._id) === -1) {
-                                console.log('adding');
                                 recipients.push(email);
                                 callback();
                             } else {

@@ -16,7 +16,7 @@ server.connection({
 
 const options = {
     info: {
-        title: 'Test API Documentation',
+        title: 'Friends Management API Documentation',
         version: '1.0'
     }
 };
