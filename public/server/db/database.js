@@ -1,10 +1,9 @@
 'use strict';
 
 const Mongoose = require('mongoose');
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
+const dbConnection = process.env.DB_CONNECTION;
 
-Mongoose.connect(`mongodb://${dbUser}:${dbPassword}@ds149324.mlab.com:49324/friends-management`);
+Mongoose.connect(`${dbConnection}/friends-management`);
 
 let db = Mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
