@@ -117,9 +117,13 @@ describe('friendsHandler', () => {
                     text: 'hello user3@gmail.com'
                 }
             };
-            let execSpy = sandbox.spy();
-            sandbox.stub(User, 'findOne').returns({
-                exec: execSpy
+            let execSpy1 = sandbox.spy();
+            let execSpy2 = sandbox.spy();
+            sandbox.stub(User, 'findOne').withArgs({email: 'user1@gmail.com'}).returns({
+                exec: execSpy1
+            });
+            User.findOne.withArgs({email: 'user3@gmail.com'}).returns({
+                exec: execSpy2
             });
 
             let callback;
@@ -128,9 +132,95 @@ describe('friendsHandler', () => {
             });
 
             subscribeHandler.getSubscribers(request, reply);
-            execSpy.yield(null, {
+            execSpy1.yield(null, {
                 _id: '123'
             });
+
+            expect(User.findOne).to.have.been.calledWith({email: 'user1@gmail.com'});
+            expect(User.find).to.have.been.calledWith({$and: [{$or: [ {'friends': '123'}, {'subscribe': '123'} ]}, {'block': {$ne: '123'}}]}, sinon.match.func);
+            callback(null, [{
+                '_id': '456',
+                'email': 'user2@gmail.com',
+                'friends': ['123'],
+                'block': []
+            }]);
+            execSpy2.yield(null, {
+                _id: '789',
+                email: 'user3@gmail.com',
+                block: []
+            });
+            expect(reply).to.have.been.calledWith({
+                success: true,
+                recipients: ['user2@gmail.com', 'user3@gmail.com']
+            });
+        });
+
+        it('should not get all users mentioned in text as subscribers if mentioned user blocks subscriber', () => {
+            let request = {
+                payload: {
+                    sender: 'user1@gmail.com',
+                    text: 'hello user3@gmail.com'
+                }
+            };
+            let execSpy1 = sandbox.spy();
+            let execSpy2 = sandbox.spy();
+            sandbox.stub(User, 'findOne').withArgs({email: 'user1@gmail.com'}).returns({
+                exec: execSpy1
+            });
+            User.findOne.withArgs({email: 'user3@gmail.com'}).returns({
+                exec: execSpy2
+            });
+
+            let callback;
+            sandbox.stub(User, 'find').callsFake((args, cb) => {
+                callback = cb;
+            });
+
+            subscribeHandler.getSubscribers(request, reply);
+            execSpy1.yield(null, {
+                _id: '123'
+            });
+
+            expect(User.findOne).to.have.been.calledWith({email: 'user1@gmail.com'});
+            expect(User.find).to.have.been.calledWith({$and: [{$or: [ {'friends': '123'}, {'subscribe': '123'} ]}, {'block': {$ne: '123'}}]}, sinon.match.func);
+            callback(null, [{
+                '_id': '456',
+                'email': 'user2@gmail.com',
+                'friends': ['123'],
+                'block': []
+            }]);
+            execSpy2.yield(null, {
+                _id: '789',
+                email: 'user3@gmail.com',
+                block: ['123']
+            });
+            expect(reply).to.have.been.calledWith({
+                success: true,
+                recipients: ['user2@gmail.com']
+            });
+        });
+
+        it('should not get duplicate subscribers', () => {
+            let request = {
+                payload: {
+                    sender: 'user1@gmail.com',
+                    text: 'hello user2@gmail.com'
+                }
+            };
+            let execSpy1 = sandbox.spy();
+            sandbox.stub(User, 'findOne').withArgs({email: 'user1@gmail.com'}).returns({
+                exec: execSpy1
+            });
+            let callback;
+            sandbox.stub(User, 'find').callsFake((args, cb) => {
+                callback = cb;
+            });
+
+            subscribeHandler.getSubscribers(request, reply);
+            execSpy1.yield(null, {
+                _id: '123'
+            });
+
             expect(User.findOne).to.have.been.calledWith({email: 'user1@gmail.com'});
             expect(User.find).to.have.been.calledWith({$and: [{$or: [ {'friends': '123'}, {'subscribe': '123'} ]}, {'block': {$ne: '123'}}]}, sinon.match.func);
             callback(null, [{
@@ -141,7 +231,7 @@ describe('friendsHandler', () => {
             }]);
             expect(reply).to.have.been.calledWith({
                 success: true,
-                recipients: ['user2@gmail.com', 'user3@gmail.com']
+                recipients: ['user2@gmail.com']
             });
         });
     });

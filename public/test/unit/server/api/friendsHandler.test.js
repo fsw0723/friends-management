@@ -120,7 +120,11 @@ describe('friendsHandler', () => {
             getFriendsStub.yield(null, friendsList);
 
             expect(User.getFriends).to.have.been.calledWith(email, sinon.match.func);
-            expect(reply).to.have.been.calledWith(friendsList);
+            expect(reply).to.have.been.calledWith({
+                count: 1,
+                friends: friendsList,
+                success: true
+            });
         });
 
         it('should return bad request error if cannot find current user information', () => {

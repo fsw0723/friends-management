@@ -1,19 +1,27 @@
 'use strict';
 
 const User = require('./models/user');
+const async = require('async');
+const Boom = require('boom');
+const Log = require('log');
+
+const log = new Log('info');
 
 function subscribe (request, reply) {
     User.findOne({email: request.payload.target}).exec((err, doc) => {
         if (err) {
-            throw (err);
+            log.error(err);
+            return reply(Boom.badImplementation());
+        }
+        if (!doc) {
+            return reply(Boom.badRequest('Cannot find user'));
         }
         User.findOneAndUpdate(
             {email: request.payload.requestor},
             {$addToSet: { subscribe: doc._id }},
             function (err, data) {
-                // Handle err
                 if (err) {
-                    console.log(err);
+                    return reply(Boom.badImplementation());
                 }
                 return reply({
                     success: true
@@ -26,15 +34,18 @@ function subscribe (request, reply) {
 function block (request, reply) {
     User.findOne({email: request.payload.target}).exec((err, doc) => {
         if (err) {
-            throw (err);
+            log.error(err);
+            return reply(Boom.badImplementation());
+        }
+        if (!doc) {
+            return reply(Boom.badRequest('Cannot find user'));
         }
         User.findOneAndUpdate(
             {email: request.payload.requestor},
             {$addToSet: {block: doc._id}},
             function (err, data) {
-                // Handle err
                 if (err) {
-                    console.log(err);
+                    return reply(Boom.badImplementation());
                 }
                 return reply({
                     success: true
@@ -51,7 +62,11 @@ function extractEmails (text) {
 function getSubscribers (request, reply) {
     User.findOne({email: request.payload.sender}).exec((err, sender) => {
         if (err) {
-            throw err;
+            log.error(err);
+            return reply(Boom.badImplementation());
+        }
+        if (!sender) {
+            return reply(Boom.badRequest('Cannot find user'));
         }
         User.find({$and: [{$or: [ {'friends': sender._id}, {'subscribe': sender._id} ]}, {'block': {$ne: sender._id}}]}, function (err, users) {
             if (!err) {
@@ -61,12 +76,40 @@ function getSubscribers (request, reply) {
 
                 let extractedEmail = extractEmails(request.payload.text);
                 if (extractedEmail) {
-                    recipients = recipients.concat(extractEmails(request.payload.text));
+                    extractedEmail = extractedEmail.filter((email) => {
+                        return recipients.indexOf(email) === -1;
+                    });
+                    async.each(extractedEmail, function (email, callback) {
+                        User.findOne({email}).exec((err, user) => {
+                            if (err) {
+                                callback(err);
+                            }
+                            if (!user || user.block.indexOf(sender._id) === -1) {
+                                console.log('adding');
+                                recipients.push(email);
+                                callback();
+                            } else {
+                                callback();
+                            }
+                        });
+                    }, function (err) {
+                        if (err) {
+                            return reply(Boom.badImplementation());
+                        } else {
+                            return reply({
+                                success: true,
+                                recipients
+                            });
+                        }
+                    });
+                } else {
+                    return reply({
+                        success: true,
+                        recipients
+                    });
                 }
-                return reply({
-                    success: true,
-                    recipients
-                });
+            } else {
+                return reply(Boom.badImplementation());
             }
         });
     });

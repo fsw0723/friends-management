@@ -100,7 +100,7 @@ describe('User', () => {
             User.getFriends('test@example.com', (err, result) => {
                 mockUser.verify();
                 mockUser.restore();
-                expect(err.message).to.deep.equal('User does not exist');
+                expect(err.message).to.deep.equal('Cannot find user');
                 done();
             });
         });

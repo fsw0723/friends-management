@@ -3,6 +3,9 @@
 const User = require('./models/user');
 const async = require('async');
 const Boom = require('boom');
+const Log = require('log');
+
+const log = new Log('info');
 
 function blockUpdates (requestor, target) {
     return requestor.block.indexOf(target._id.toString()) > -1;
@@ -17,10 +20,11 @@ function create (request, reply) {
         queries.push(function (cb) {
             User.findOne({email: email}).exec(function (err, docs) {
                 if (err) {
-                    throw cb(err);
+                    log.error('Error finding user', err);
+                    return reply(Boom.badImplementation());
                 }
                 if (!docs) {
-                    return reply(Boom.badRequest('User does not exist.'));
+                    return reply(Boom.badRequest('Cannot find user.'));
                 }
                 cb(null, docs);
             });
@@ -30,7 +34,8 @@ function create (request, reply) {
     async.parallel(queries, function (err, docs) {
         // if any query fails
         if (err) {
-            throw err;
+            log.error('Error finding user', err);
+            return reply(Boom.badImplementation());
         }
 
         let user1 = docs[0];
@@ -61,10 +66,18 @@ function create (request, reply) {
 function get (request, reply) {
     User.getFriends(request.query.email, (err, friends) => {
         if (err) {
-            return reply(Boom.badRequest(err));
+            log.error('Error finding friends for user', err);
+            if (err.message === 'Cannot find user') {
+                return reply(Boom.badRequest(err.message));
+            }
+            return reply(Boom.badImplementation());
         }
 
-        return reply(friends);
+        return reply({
+            success: true,
+            friends,
+            count: friends.length
+        });
     });
 }
 
@@ -80,7 +93,11 @@ function getCommon (request, reply) {
 
     async.parallel(queries, (err, docs) => {
         if (err) {
-            return reply(Boom.badRequest(err));
+            log.error('Error finding friends for user', err);
+            if (err.message === 'Cannot find user') {
+                return reply(Boom.badRequest(err.message));
+            }
+            return reply(Boom.badImplementation());
         }
 
         let common = docs[0].filter((user) => docs[1].includes(user));

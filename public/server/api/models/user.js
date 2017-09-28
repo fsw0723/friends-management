@@ -22,7 +22,7 @@ userSchema.statics.getFriends = function (email, cb) {
             }
 
             if (!user) {
-                return cb(new Error('User does not exist'));
+                return cb(new Error('Cannot find user'));
             }
 
             return cb(null, user.friends.map((friend) => {
