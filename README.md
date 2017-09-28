@@ -1,6 +1,6 @@
 # friends-management
 
-## [Demo](https://friends-management-api.herokuapp.com/documentation#!/user/postUser)
+## [Demo](https://friends-management-api.herokuapp.com/documentation)
 
 Deployed onto Heroku with MongoDB hosted on MLab.
 
@@ -11,9 +11,11 @@ Deployed onto Heroku with MongoDB hosted on MLab.
 * **Documentation**: Swagger
 * **Linter**: Eslint
 
-## Setup development environment with Vagrant
+## Setup development environment
 
 Before start, download the repository and duplicate .env.sample to be .env file.
+
+### With Vagrant
 
 **Requirements**
 * [Vagrant](https://www.vagrantup.com/)
@@ -28,6 +30,16 @@ Run the following commands to setup the environment with Vagrant:
 5. ```npm install```
 6. ```npm start```
 
+### Without Vagrant
+
+**Requirements**
+* NodeJS
+* MongoDB
+
+Run the following commands to setup the environment with Vagrant:
+1. ```cd public```
+2. ```npm install```
+3. ```npm start```
 
 The project will run on [http://localhost:3000](http://localhost:3000). Go to /documentation for Swagger documentation.
 
